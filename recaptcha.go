@@ -15,7 +15,7 @@ const apiURL = "https://www.google.com/recaptcha/api/siteverify"
 
 //API Response from Google
 type apiResponse struct {
-	Success    bool
+	Success    bool     `json:"success"`
 	ErrorCodes []string `json:"error-codes"`
 }
 
@@ -59,12 +59,13 @@ func (rec *Recaptcha) Verify(gRecaptchaResponse, clientIP string) (bool, error) 
 	}
 
 	res := apiResponse{}
-	err = json.Unmarshal(body, res)
+	err = json.Unmarshal(body, &res)
 	if err != nil {
 		return false, err
 	}
+
 	if res.Success {
-		return res.Success, nil
+		return true, nil
 	}
 
 	if len(res.ErrorCodes) > 0 {
